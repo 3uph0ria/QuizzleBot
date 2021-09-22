@@ -55,6 +55,19 @@ class Database
         return $botUserReturn;
     }
 
+    public function GetTest($IdTest)
+    {
+        $botUser =  $this->link->prepare("SELECT * FROM `Tests` WHERE `Id` = ?");
+        $botUser->execute(array($IdTest));
+        return $botUser->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function UpdRedirectTest($TextRedirect, $Redirect, $IdTest)
+    {
+        $addUser = $this->link->prepare("UPDATE `Tests` SET `TextRedirect` = ?, `Redirect` = ? WHERE `id` = ?");
+        $addUser->execute(array($TextRedirect, $Redirect, $IdTest));
+    }
+
     public function GetQuestions($IdTest)
     {
         $botUserAll = $this->link->query("SELECT * FROM `Questions` WHERE `IdTest` = $IdTest");

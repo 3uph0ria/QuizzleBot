@@ -7,6 +7,10 @@ include_once '../include/header/header.php';
 <!-- Main Sidebar Container -->
 <? include_once '../include/main-sidebar/main-sidebar.php' ?>
 
+<?php
+$test = $Database->GetTest($_GET['IdTest']);
+?>
+
 <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -14,7 +18,7 @@ include_once '../include/header/header.php';
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1 class="m-0">Редактирование теста</h1>
+                <h1 class="m-0">Редактирование теста: <?=$test['Name']?></h1>
               </div><!-- /.col -->
             </div><!-- /.row -->
           </div><!-- /.container-fluid -->
@@ -49,7 +53,7 @@ include_once '../include/header/header.php';
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
                             </div>
                             <div class="modal-body">
-                                <form action="actions/action_add_qusion.php" method="post">
+                                <form action="actions/action_question.php?method=add" method="post">
                                     <div class="md-form mt-4" style="display: none">
                                         <label for="button_text">id</label>
                                         <input type="text" id="IdTest" class="form-control" name="IdTest" value="<?=$_GET['IdTest']?>" maxlength="20">
@@ -90,7 +94,7 @@ include_once '../include/header/header.php';
 											</thead>
 											<tbody>
 													<tr>
-															<td class="col-lg-6"><?=$questions[$i]['Text']?></td>
+															<td class="col-lg-6"><?=base64_decode($questions[$i]['Text'])?></td>
 															<td class="col-lg-3"><a href="#updQuestion<?=$i?>" class="btn btn-primary" data-toggle="modal">Изменить</a></td>
 															<td class="col-lg-3"><a href="#delQuestion<?=$i?>" class="btn btn-danger" data-toggle="modal">Удалить</a></td>
 													</tr>
@@ -116,7 +120,7 @@ include_once '../include/header/header.php';
 																			</div>
 																			<div class="md-form mt-4">
 																					<label for="value">Текст вопроса</label>
-																					<textarea name="Text" id="Text" cols="30" rows="3" class="form-control w-100" maxlength="500"><?=$questions[$i]['Text']?></textarea>
+																					<textarea name="Text" id="Text" cols="30" rows="3" class="form-control w-100" maxlength="500"><?=base64_decode($questions[$i]['Text'])?></textarea>
 																			</div>
 																			<div class="text-center mt-4 d-flex justify-content-center">
 																					<button type="submit" class="btn btn-primary btn-block btn-rounded z-depth-1a" style="width: 40%;height: 50px;border-radius: 34px">Сохранить</button>
@@ -142,7 +146,7 @@ include_once '../include/header/header.php';
 																					<label for="Id">id</label>
 																					<input type="text" id="Id" class="form-control" name="Id" value="<?=$questions[$i]['Id']?>" maxlength="20">
 																			</div>
-																			<h3 class="text-center">Вы действительно хотите удалить вопрос "<?=$questions[$i]['Text']?>"?</h3>
+																			<h3 class="text-center">Вы действительно хотите удалить вопрос "<?=base64_decode($questions[$i]['Text'])?>"?</h3>
 																			<div class="text-center mt-4 d-flex justify-content-center">
 																					<button type="submit" class="btn btn-danger btn-block btn-rounded z-depth-1a" style="width: 40%;height: 50px;border-radius: 34px">Удалить</button>
 																			</div>
@@ -216,7 +220,7 @@ include_once '../include/header/header.php';
 																			</div>
 																			<div class="md-form mt-4">
 																					<label for="value">Текст ответа</label>
-																					<textarea name="Text" id="Text" cols="30" rows="3" class="form-control w-100" maxlength="500"><?=$answers[$j]['Text']?></textarea>
+																					<textarea name="Text" id="Text" cols="30" rows="3" class="form-control w-100" maxlength="500"><?=base64_decode($answers[$j]['Text'])?></textarea>
 																			</div>
 																			<div class="text-center mt-4 d-flex justify-content-center">
 																					<button type="submit" class="btn btn-primary btn-block btn-rounded z-depth-1a" style="width: 40%;height: 50px;border-radius: 34px">Сохранить</button>
@@ -277,7 +281,7 @@ include_once '../include/header/header.php';
 																			<?=$j + 1?>
 																	</th>
 																	<td>
-																			<?=htmlspecialchars($answers[$j]['Text'])?></td>
+																			<?=base64_decode($answers[$j]['Text'])?></td>
 																	<td>
 																			<?=htmlspecialchars($answers[$j]['Correct'])?>
 																	</td>
@@ -303,6 +307,27 @@ include_once '../include/header/header.php';
 										<p>Добавьте вопросы</p>
 									</div>
 								<?endif;?>
+
+							<div class="container mt-5 mb-3">
+									<h4>Сообщение после прохождение теста</h4>
+									<form action="actions/action_tests.php?method=updRedirect" method="post">
+										<div class="md-form mt-4" style="display: none">
+												<label for="button_text">id</label>
+												<input type="text" id="IdTest" class="form-control" name="IdTest" value="<?=$_GET['IdTest']?>" maxlength="20">
+										</div>
+										<div class="md-form mt-4">
+												<label for="button_text">Ссылка</label>
+												<input type="text" min="0" id="Redirect" value="<?=$test['Redirect']?>" class="form-control" name="Redirect" maxlength="20">
+										</div>
+										<div class="md-form mt-4">
+												<label for="TextRedirect">Текст сообщения</label>
+												<textarea name="TextRedirect" id="TextRedirect" cols="30" rows="2" class="form-control w-100" maxlength="500"><?=$test['TextRedirect']?></textarea>
+										</div>
+										<div class="text-center mt-4 d-flex justify-content-center">
+												<button type="submit" class="btn btn-primary btn-block btn-rounded z-depth-1a" style="width: 40%;height: 50px;border-radius: 34px">Сохранить</button>
+										</div>
+									</form>
+							</div>
 
                 </div>
             </div>
