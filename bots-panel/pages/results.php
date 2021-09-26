@@ -47,6 +47,7 @@ include_once '../include/header/header_stats.php';
 													<th>Результат</th>
 													<th>Тест</th>
 													<th>Дата</th>
+													<th>Платформа</th>
 													<th>Удалить</th>
 												</tr>
 											</thead>
@@ -57,6 +58,7 @@ include_once '../include/header/header_stats.php';
 													<th>Результат</th>
 													<th>Тест</th>
 													<th>Дата</th>
+													<th>Платформа</th>
 													<th>Удалить</th>
 												</tr>
 											</tfoot>
@@ -76,7 +78,7 @@ include_once '../include/header/header_stats.php';
 																<img src="<?=$users[$i]['Photo']?>" alt="" style="border-radius: 50%; width: 100%; height: 25px">
 															</div>
 															<div class="col-lg-10">
-																<a href="https://vk.com/id<?=$users[$i]['PeerId']?>" target="_blank"><?=$users[$i]['FullName']?></a>
+																<a href="<?if($users[$i]['Platform'] == 'vk'):?>https://vk.com/id<?=$users[$i]['PeerId']?><?else:?>https://t.me/<?=$users[$i]['TgName']?><?endif;?>" target="_blank"><?=$users[$i]['FullName']?></a>
 															</div>
 														</div>
 													</td>
@@ -88,6 +90,9 @@ include_once '../include/header/header_stats.php';
 													</td>
 													<td>
 															<?=$users[$i]['Date']?>
+													</td>
+													<td>
+															<?=$users[$i]['Platform']?>
 													</td>
 													<td><a href="#delResult<?=$i?>" class="btn btn-danger" data-toggle="modal">Удалить</a></td>
 												</tr>

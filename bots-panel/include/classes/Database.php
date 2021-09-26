@@ -37,7 +37,7 @@ class Database
 
     public function GetUserResults($IdPanelUser)
     {
-        $botUserAll = $this->link->query("SELECT Users.Id, Users.FullName, Users.Photo, Users.PeerId, COUNT(UserResults.Id), SUM(Answers.Correct), Tests.Name, UserResults.Date FROM `UserResults` INNER JOIN Answers INNER JOIN Users INNER JOIN Tests INNER JOIN Bots WHERE `IdPanelUser` = $IdPanelUser AND Users.Id = UserResults.IdUser AND UserResults.IdAnswer = Answers.Id AND Tests.Id = UserResults.IdTest GROUP BY UserResults.IdUser");
+        $botUserAll = $this->link->query("SELECT Users.Id, Users.Platform, Users.TgName, Users.FullName, Users.Photo, Users.PeerId, COUNT(UserResults.Id), SUM(Answers.Correct), Tests.Name, UserResults.Date FROM `UserResults` INNER JOIN Answers INNER JOIN Users INNER JOIN Tests INNER JOIN Bots WHERE `IdPanelUser` = $IdPanelUser AND Users.Id = UserResults.IdUser AND UserResults.IdAnswer = Answers.Id AND Tests.Id = UserResults.IdTest GROUP BY UserResults.IdUser");
         while ($botUser = $botUserAll->fetch(PDO::FETCH_ASSOC))
         {
             $botUserReturn[] = $botUser;
@@ -66,6 +66,12 @@ class Database
     {
         $addUser = $this->link->prepare("UPDATE `Tests` SET `TextRedirect` = ?, `Redirect` = ? WHERE `id` = ?");
         $addUser->execute(array($TextRedirect, $Redirect, $IdTest));
+    }
+
+    public function UpdResultViewed($idUser)
+    {
+        $addUser = $this->link->prepare("UPDATE `Users` SET `ResultViewed` = 1 WHERE `Id` = ?");
+        $addUser->execute(array($idUser));
     }
 
     public function GetQuestions($IdTest)
@@ -122,11 +128,19 @@ class Database
         $addUser->execute(array($Id));
     }
 
-    public function AddUser($IdBot, $PeerId, $Photo, $FillName)
+    public function AddUser($IdBot, $PeerId, $Photo, $FillName, $Platform, $TgName)
     {
         $this->link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $addUser = $this->link->prepare("INSERT INTO `Users` (`IdBot`, `PeerId`, `Photo`, `FullName`) VALUES (?, ?, ?, ?)");
-        $addUser->execute(array($IdBot, $PeerId, $Photo, $FillName));
+        if($TgName)
+        {
+            $addUser = $this->link->prepare("INSERT INTO `Users` (`IdBot`, `PeerId`, `Photo`, `FullName`, `Platform`, `TgName`, `ResultViewed`) VALUES (?, ?, ?, ?, ?, ?, 0)");
+            $addUser->execute(array($IdBot, $PeerId, $Photo, $FillName, $Platform, $TgName));
+        }
+        else
+        {
+            $addUser = $this->link->prepare("INSERT INTO `Users` (`IdBot`, `PeerId`, `Photo`, `FullName`, `Platform`, `ResultViewed`) VALUES (?, ?, ?, ?, ?, 0)");
+            $addUser->execute(array($IdBot, $PeerId, $Photo, $FillName, $Platform));
+        }
     }
 
     public function AddAnswer($IdQuestion, $Text, $Correct)
@@ -148,16 +162,16 @@ class Database
     }
 
 
-    public function AddQuestion($IdTest, $Text, $Score)
+    public function AddQuestion($IdTest, $Text, $Score, $Img)
     {
-        $addUser = $this->link->prepare("INSERT INTO `Questions` (`IdTest`, `Text`, `Score`) VALUES (?, ?, ?)");
-        $addUser->execute(array($IdTest, $Text, $Score));
+        $addUser = $this->link->prepare("INSERT INTO `Questions` (`IdTest`, `Text`, `Score`, `Img`) VALUES (?, ?, ?, ?)");
+        $addUser->execute(array($IdTest, $Text, $Score, $Img));
     }
 
-    public function UpdQuestion($Text, $Score, $Id)
+    public function UpdQuestion($Text, $Score, $Img, $Id)
     {
-        $addUser = $this->link->prepare("UPDATE `Questions` SET `Text` = ?, `Score` = ? WHERE `id` = ?");
-        $addUser->execute(array($Text, $Score, $Id));
+        $addUser = $this->link->prepare("UPDATE `Questions` SET `Text` = ?, `Score` = ?, `Img` = ? WHERE `id` = ?");
+        $addUser->execute(array($Text, $Score, $Img, $Id));
     }
 
     public function DelQuestion($Id)

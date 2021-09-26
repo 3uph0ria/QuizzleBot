@@ -42,7 +42,7 @@ if($message)
     if(!$user)
     {
         $searchUser = $vkRequest->request("users.get", ["user_ids" => $peer_id, "fields" => "photo_50"]);
-        $Database->AddUser(1, $peer_id, $searchUser[0]['photo_50'], $searchUser[0]['first_name'] . ' ' . $searchUser[0]['last_name']);
+        $Database->AddUser(1, $peer_id, $searchUser[0]['photo_50'], $searchUser[0]['first_name'] . ' ' . $searchUser[0]['last_name'], 'vk', null);
     }
 
     if(($button->command && $message != 'начать') || ($message > 0 && $message < 5))
@@ -55,10 +55,7 @@ if($message)
                 if(!$userQuestion)
                 {
                     $answers = $Database->GetAnswers($question[$i]['Id']);
-                    for($j = 0; $j < Count($answers); $j++)
-                    {
-                        $Database->AddUserResult($user['Id'], 1, $question[$i]['Id'], $message - 1, date('Y-m-d H:i:s'), 1);
-                    }
+                    $Database->AddUserResult($user['Id'], 1, $question[$i]['Id'], $answers[$message - 1]['Id'], date('Y-m-d H:i:s'), 1);
                     break;
                 }
             }
@@ -78,6 +75,11 @@ if($message)
         $userQuestion = $Database->GetUserQuestion($user['Id'], $question[$i]['Id']);
         if(!$userQuestion)
         {
+            if($question[$i]['Img'])
+            {
+                $vkRequest->RequestManagerPhoto($peer_id, $question[$i]['Img']);
+            }
+            
             $answers = $Database->GetAnswers($question[$i]['Id']);
             $alert = base64_decode($question[$i]['Text']) . "\n";
             for($j = 0; $j < Count($answers); $j++)
@@ -92,11 +94,20 @@ if($message)
 
     if(!$commends)
     {
-        $result = $Database->GetUserResult($user['Id']);
-        $vk->sendMessage($peer_id, $user['FullName'] . ', Вы успешно прошли тест' . "\n" . 'Результат: ' . $result['SUM(Answers.Correct)'] . '/' . $result['COUNT(UserResults.Id)'] . ' баллов' . "\n" . $test['TextRedirect'] . "\n" . $test['Redirect']);
+        if($user['ResultViewed'] == 0)
+        {
+            $Database->UpdResultViewed($user['Id']);
+            $result = $Database->GetUserResult($user['Id']);
+            $vk->sendMessage($peer_id, $user['FullName'] . ', Вы успешно прошли тест' . "\n" . 'Результат: ' . $result['SUM(Answers.Correct)'] . '/' . $result['COUNT(UserResults.Id)'] . ' баллов' . "\n" . $test['TextRedirect'] . "\n" . $test['Redirect']);
+            if($alert) $buttonMessage = $alert;
+            else $buttonMessage = 'выберите действие';
+            $vk->sendButton($peer_id, $buttonMessage, $commends);
+        }
     }
-
-    if($alert) $buttonMessage = $alert;
-    else $buttonMessage = 'выберите действие';
-    $vk->sendButton($peer_id, $buttonMessage, $commends);
+    else
+    {
+        if($alert) $buttonMessage = $alert;
+        else $buttonMessage = 'выберите действие';
+        $vk->sendButton($peer_id, $buttonMessage, $commends);
+    }
 }

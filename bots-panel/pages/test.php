@@ -62,6 +62,10 @@ $test = $Database->GetTest($_GET['IdTest']);
                                         <label for="button_text">Кол-во баллов</label>
                                         <input type="number" min="0" id="Score"  class="form-control" name="Score" maxlength="20">
                                     </div>
+																		<div class="md-form mt-4">
+                                        <label for="Img">Изображение (если нету оставьте пустым)</label>
+                                        <input type="text" min="0" id="Img"  class="form-control" name="Img" maxlength="200">
+                                    </div>
                                     <div class="md-form mt-4">
                                         <label for="value">Текст вопроса</label>
                                         <textarea name="Text" id="Text" cols="30" rows="2" class="form-control w-100" maxlength="500"></textarea>
@@ -88,13 +92,15 @@ $test = $Database->GetTest($_GET['IdTest']);
 											<thead>
 													<tr>
 															<th scope="col">Вопрос</th>
+															<th scope="col">Кол-во баллов</th>
 															<th scope="col">Изменить</th>
 															<th scope="col">Удалить</th>
 													</tr>
 											</thead>
 											<tbody>
 													<tr>
-															<td class="col-lg-6"><?=base64_decode($questions[$i]['Text'])?></td>
+															<td class="col-lg-4"><?=base64_decode($questions[$i]['Text'])?></td>
+															<td class="col-lg-2"><?=$questions[$i]['Score']?></td>
 															<td class="col-lg-3"><a href="#updQuestion<?=$i?>" class="btn btn-primary" data-toggle="modal">Изменить</a></td>
 															<td class="col-lg-3"><a href="#delQuestion<?=$i?>" class="btn btn-danger" data-toggle="modal">Удалить</a></td>
 													</tr>
@@ -116,7 +122,11 @@ $test = $Database->GetTest($_GET['IdTest']);
 																			</div>
 																			<div class="md-form mt-4">
 																					<label for="button_text">Кол-во баллов</label>
-																					<input type="number" min="0" id="Correct" value="<?=$questions[$i]['Score']?>" class="form-control" name="Correct" maxlength="20">
+																					<input type="number" min="0" id="Score" value="<?=$questions[$i]['Score']?>" class="form-control" name="Score" maxlength="20">
+																			</div>
+																			<div class="md-form mt-4">
+																					<label for="Img">Изображение (если нету оставьте пустым)</label>
+																					<input type="text" min="0" id="Img" value="<?=$questions[$i]['Img']?>" class="form-control" name="Img" maxlength="200">
 																			</div>
 																			<div class="md-form mt-4">
 																					<label for="value">Текст вопроса</label>
@@ -177,8 +187,11 @@ $test = $Database->GetTest($_GET['IdTest']);
 																					<input type="text" id="IdQuestion" class="form-control" name="IdQuestion" value="<?=$questions[$i]['Id']?>" maxlength="20">
 																			</div>
 																			<div class="md-form mt-4">
-																					<label for="button_text">Правильный?</label>
-																					<input type="number" min="0" id="Correct"  class="form-control" name="Correct" maxlength="20">
+																					<label for="Correct">Правильный?</label>
+																					<select class="browser-default custom-select" name="Correct">
+																							<option>Да</option>
+																							<option selected>Нет</option>
+																					</select>
 																			</div>
 																			<div class="md-form mt-4">
 																					<label for="value">Текст ответа</label>
@@ -215,8 +228,11 @@ $test = $Database->GetTest($_GET['IdTest']);
 																					<input type="text" id="Id" class="form-control" name="Id" value="<?=$answers[$j]['Id']?>" maxlength="20">
 																			</div>
 																			<div class="md-form mt-4">
-																					<label for="button_text">Правильный?</label>
-																					<input type="number" min="0" id="Correct" value="<?=$answers[$j]['Correct']?>" class="form-control" name="Correct" maxlength="20">
+																					<label for="Correct">Правильный?</label>
+																					<select class="browser-default custom-select" name="Correct">
+																							<option <?if($answers[$j]['Correct'] == 1):?>selected<?endif;?>>Да</option>
+																							<option <?if($answers[$j]['Correct'] == 0):?>selected<?endif;?>>Нет</option>
+																					</select>
 																			</div>
 																			<div class="md-form mt-4">
 																					<label for="value">Текст ответа</label>
@@ -283,7 +299,7 @@ $test = $Database->GetTest($_GET['IdTest']);
 																	<td>
 																			<?=base64_decode($answers[$j]['Text'])?></td>
 																	<td>
-																			<?=htmlspecialchars($answers[$j]['Correct'])?>
+																			<?if($answers[$j]['Correct'] == 1):?>Да<?else:?>Нет<?endif;?>
 																	</td>
 																	<td><a href="#updAnswer<?=$i?>_<?=$j?>" class="btn btn-primary" data-toggle="modal">Изменить</a></td>
 																	<td><a href="#delAnswer<?=$i?>_<?=$j?>" class="btn btn-danger" data-toggle="modal">Удалить</a></td>
