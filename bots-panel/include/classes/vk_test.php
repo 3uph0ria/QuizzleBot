@@ -72,6 +72,6 @@ class vk
 
     public function RequestManagerPhoto($peer_id, $message)
     {
-            $this->send($peer_id, '', $message);
+        $this->send($peer_id, '', $message);
     }
 }

@@ -47,7 +47,7 @@ class Database
 
     public function GetTests($IdUser)
     {
-        $botUserAll = $this->link->query("SELECT * FROM `Tests` WHERE `Id` = $IdUser");
+        $botUserAll = $this->link->query("SELECT * FROM `Tests` WHERE `IdUser` = $IdUser");
         while ($botUser = $botUserAll->fetch(PDO::FETCH_ASSOC))
         {
             $botUserReturn[] = $botUser;
@@ -59,6 +59,23 @@ class Database
     {
         $botUser =  $this->link->prepare("SELECT * FROM `Tests` WHERE `Id` = ?");
         $botUser->execute(array($IdTest));
+        return $botUser->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function GetBots($IdUser)
+    {
+        $botUserAll = $this->link->query("SELECT * FROM `Bots` WHERE `IdUserPanel` = $IdUser");
+        while ($botUser = $botUserAll->fetch(PDO::FETCH_ASSOC))
+        {
+            $botUserReturn[] = $botUser;
+        }
+        return $botUserReturn;
+    }
+
+    public function GetBot($Id)
+    {
+        $botUser =  $this->link->prepare("SELECT * FROM `Bots` WHERE `Id` = ?");
+        $botUser->execute(array($Id));
         return $botUser->fetch(PDO::FETCH_ASSOC);
     }
 
@@ -100,6 +117,19 @@ class Database
         $addUser->execute(array($IdUser, $name));
     }
 
+    public function AddBot($IdUser, $TestId, $Name, $Token, $ServerKey)
+    {
+        $addUser = $this->link->prepare("INSERT INTO `Bots` (`IdUserPanel`, `TestId`, `Name`, `Token`, `ServerKey`, `Platform`) VALUES (?, ?, ?, ?, ?, 'vk')");
+        $addUser->execute(array($IdUser, $TestId, $Name, $Token, $ServerKey));
+    }
+
+    public function UpdBot($TestId, $Name, $Token, $ServerKey, $Id)
+    {
+        $addUser = $this->link->prepare("UPDATE `Bots` SET `TestId` = ?, `Name` = ?, `Token` = ?, `ServerKey` = ? WHERE `Id` = ?");
+        $addUser->execute(array($TestId, $Name, $Token, $ServerKey, $Id));
+    }
+
+
 
     public function GetUser($PeerId, $BotId)
     {
@@ -125,6 +155,9 @@ class Database
     public function DelUserResult($Id)
     {
         $addUser = $this->link->prepare("DELETE FROM `UserResults` WHERE `IdUser` = ?");
+        $addUser->execute(array($Id));
+
+        $addUser = $this->link->prepare("DELETE FROM `Users` WHERE `Id` = ?");
         $addUser->execute(array($Id));
     }
 

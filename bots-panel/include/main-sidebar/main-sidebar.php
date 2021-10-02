@@ -34,7 +34,7 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="#AddTest" data-toggle="modal" class="nav-link">
                   <i class="far fa-circle text-success nav-icon"></i>
                   <p>Создать тест</p>
                 </a>
@@ -59,7 +59,43 @@
               <p>Результаты тестов</p>
             </a>
           </li>
+					<li class="nav-item">
+            <a href="/bots-panel/pages/bots_vk.php" class="nav-link">
+              <i class="nav-icon fas fa-chart-pie"></i>
+              <p>ВК боты</p>
+            </a>
+          </li>
         </ul>
       </nav>
     </div>
   </aside>
+
+	<div class="modal fade" id="AddTest" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content">
+							<div class="modal-header">
+									<h5 class="modal-title" id="exampleModalLabel">Добавить тест</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+							</div>
+							<div class="modal-body">
+									<form action="actions/action_tests.php?method=add" method="post">
+											<div class="md-form mt-4" style="display: none">
+													<label for="IdUserPanel">id</label>
+													<input type="text" id="IdUserPanel" class="form-control" name="IdUserPanel" value="<?=$_SESSION['userId']?>" maxlength="20">
+											</div>
+											<div class="md-form mt-4">
+													<label for="Name">Наименование (для удобства)</label>
+													<input type="text" id="Name"  class="form-control" name="Name" maxlength="200">
+											</div>
+											<div class="text-center mt-4 d-flex justify-content-center">
+													<button type="submit" class="btn btn-primary btn-block btn-rounded z-depth-1a" style="width: 40%;height: 50px;border-radius: 34px">Добавить</button>
+											</div>
+									</form>
+							</div>
+							<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+							</div>
+					</div>
+			</div>
+	</div>
+

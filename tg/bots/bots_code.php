@@ -25,6 +25,8 @@ if($message)
     if(!$user)
     {
         $Database->AddUser(1, $peer_id, 'test', $first_name, 'tg', $username);
+        $bot->reply($peer_id,
+            'Здравствуйте' . "\n" . 'Тебе дается 4 варианта ответа'  . "\n" . 'выбери тот который считаешь нужным'  . "\n" . 'для ответа напиши цифру от 1 до 4');
     }
 
     if($message > 0 && $message < 5)
@@ -62,7 +64,7 @@ if($message)
     if(!$alert)
     {
         $result = $Database->GetUserResult($user['Id']);
-        $bot->reply($peer_id, $user['FullName'] . ', Вы успешно прошли тест' . "\n" . 'Результат: ' . $result['SUM(Answers.Correct)'] . '/' . $result['COUNT(UserResults.Id)'] . ' баллов' . "\n" . $test['TextRedirect'] . "\n" . 't.me/work /_  and_mani');
+        $bot->reply($peer_id, $user['FullName'] . ', Вы успешно прошли тест' . "\n" . 'Результат: ' . $result['SUM(Answers.Correct)'] . '/' . $result['COUNT(UserResults.Id)'] . ' баллов' . "\n" . $test['TextRedirect'] . "\n" . $test['Redirect']);
     }
     else
     {
