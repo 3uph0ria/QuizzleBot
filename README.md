@@ -1,11 +1,13 @@
 # QuizzleBot
+Bot for farrowing in messengers with control panel.
 
-## Functional
-* Conducts a user survey and provides the survey results
-
-## TODO List
-* Develop admin panel
+* VK/TG platforms
+* Admin panel
 
 ## Preview
 
 ![Превью](img/preview.png)
+
+![Превью](img/1.jpg)
+
+![Превью](img/2.jpg)

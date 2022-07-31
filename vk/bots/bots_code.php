@@ -1,22 +1,20 @@
 <?php
-
 //$start = microtime(true);
 
 require_once($_SERVER['DOCUMENT_ROOT'] . '/bots-panel/include/classes/Database.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/bots-panel/include/classes/vk.php');
 require_once('config.php');
 $Database = new Database();
-$vkRequest = new vk();
+$bot= $Database->GetBot(BotId);
 
 require_once($_SERVER['DOCUMENT_ROOT'] . '/bots-panel/include/classes/simplevk/autoload.php'); // Подключение библиотеки
 
 use DigitalStar\vk_api\VK_api as vk_api; // Основной класс
 use DigitalStar\vk_api\VkApiException; // Обработка ошибок
 
-$vk = vk_api::create(TOKEN, VERSION)->setConfirm(KEY);
+$vk = vk_api::create($bot['Token'], '5.103')->setConfirm($bot['ServerKey']);
 
 $data = json_decode(file_get_contents('php://input')); //Получает и декодирует JSON пришедший из ВК
-$test = $Database->GetTest(1);
+$test = $Database->GetTest($bot['TestId']);
 
 //if($_POST['mailingText'])
 //{
@@ -38,6 +36,9 @@ $question = $Database->GetQuestions(1);
 
 if($message)
 {
+    require_once($_SERVER['DOCUMENT_ROOT'] . '/bots-panel/include/classes/vk_test.php');
+    $vkRequest = new vk();
+
     $user = $Database->GetUser($peer_id, 1);
     if(!$user)
     {
@@ -79,7 +80,7 @@ if($message)
             {
                 $vkRequest->RequestManagerPhoto($peer_id, $question[$i]['Img']);
             }
-            
+
             $answers = $Database->GetAnswers($question[$i]['Id']);
             $alert = base64_decode($question[$i]['Text']) . "\n";
             for($j = 0; $j < Count($answers); $j++)
